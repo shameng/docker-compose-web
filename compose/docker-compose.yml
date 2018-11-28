@@ -52,7 +52,7 @@ services:
       - ../nginx/cond.d:/etc/nginx/conf.d:ro
       - ../nginx/log/access.log:/var/log/nginx/access.log
     ports:
-      - "80:80"
+      - "88:88"
     depends_on:
       - web
 
