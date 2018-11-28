@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+root=$(cd `dirname $0`; dirname `pwd`)
+
+docker-compose -p web -f ${root}/compose/docker-compose.yml "$@"
