@@ -1,0 +1,58 @@
+version: "1"
+
+networks:
+  frontend:
+  backend:
+
+services:
+
+  redis:
+    image: redis:latest
+    networks:
+      - backend
+    volumes:
+      - ../redis/data:/data
+      - ../redis/redis.conf:/etc/redis/redis.conf:ro
+    command: ["redis-server", "/etc/redis/redis.conf"]
+    ports:
+      - "6379:6379"
+
+  mysql:
+    image: mysql:5.7
+    networks:
+      - backend
+    volumes:
+      - ../mysql/data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: meng
+      MYSQL_USER: meng
+      MYSQL_PASSWORD: meng
+    ports:
+      - "3306:3306"
+
+  web:
+      image: web:latest
+      networks:
+        - frontend
+        - backend
+      volumes:
+        - ../logs:/workspace/logs
+      ports:
+        - "21000:21000"
+      depends_on:
+        - redis
+        - mysql
+
+  nginx:
+    image: nginx:1.12
+    networks:
+      - frontend
+    volumes:
+      - ../nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../nginx/cond.d:/etc/nginx/conf.d:ro
+      - ../nginx/log/access.log:/var/log/nginx/access.log
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+
